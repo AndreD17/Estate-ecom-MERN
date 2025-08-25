@@ -27,3 +27,12 @@ const port = 4000;
 app.listen(port, () => console.log(`🚀 Server running on http://localhost:${port}`));
 
 
+app.use((err, req, res, next) => {
+  const statusCode = err.status || 500;
+  const message = err.message || 'Internal Server Error';
+  return res.status(statusCode).json({
+    success: false,
+    statusCode,
+    message
+  })
+});
