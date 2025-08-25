@@ -1,4 +1,6 @@
 export const test = (req, res) => {
-    res.json({ message: 'List of users' });
+    res.json({ message: 'List of users'
+        
+     });
 }
 
