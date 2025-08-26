@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema({
     },
     avatar:{
         type: String,
-        default: "https://www.google.com/imgres?q=&imgurl=https%3A%2F%2Fstatic.vecteezy.com%2Fsystem%2Fresources%2Fthumbnails%2F005%2F544%2F718%2Fsmall_2x%2Fprofile-icon-design-free-vector.jpg&imgrefurl=https%3A%2F%2Fwww.vecteezy.com%2Ffree-vector%2Fprofile-icon&docid=RBpRIqik_jZCqM&tbnid=eKLh9kovO5Hp6M&vet=12ahUKEwj46Z-Bi6ePAxVGZ0EAHRqoCGAQM3oECBMQAA..i&w=400&h=400&hcb=2&itg=1&ved=2ahUKEwj46Z-Bi6ePAxVGZ0EAHRqoCGAQM3oECBMQAA"
+        default: "https://img.freepik.com/premium-vector/avatar-profile-icon-flat-style-female-user-profile-vector-illustration-isolated-background-women-profile-sign-business-concept_157943-38866.jpg?semt=ais_hybrid&w=740&q=80"
     }
 }, {timestamps: true});
 
