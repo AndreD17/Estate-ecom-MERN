@@ -4,10 +4,12 @@ import cors from "cors";
 import multer from 'multer';
 import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
 
-dotenv.config(); 
+dotenv.config();
+
 
 const app = express();
 const port = 4000;
@@ -18,6 +20,7 @@ app.use(cors({
   methods: ["GET", "POST"]
 }));
 
+app.use(cookieParser());
 
 // Multer (file upload middleware)
 const upload = multer({ storage: multer.memoryStorage() });
