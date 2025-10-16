@@ -1,12 +1,12 @@
 import express from 'express';
 import mongoose from 'mongoose';
 import cors from "cors";
-import multer from 'multer';
-import AWS from 'aws-sdk';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
+import uploadRouter from './routes/upload.routes.js';
+
 
 dotenv.config();
 
@@ -22,49 +22,6 @@ app.use(cors({
 
 app.use(cookieParser());
 
-// Multer (file upload middleware)
-const upload = multer({ storage: multer.memoryStorage() });
-
-// Configure DigitalOcean Spaces
-const spacesEndpoint = new AWS.Endpoint(process.env.SPACES_ENDPOINT);
-const s3 = new AWS.S3({
-  endpoint: spacesEndpoint,
-  accessKeyId: process.env.SPACES_KEY,
-  secretAccessKey: process.env.SPACES_SECRET,
-});
-
-// ✅ Upload route
-app.post("/api/upload", upload.single("file"), (req, res) => {
-
-   // ✅ Check size
-  if (req.file.size > 2 * 1024 * 1024) {
-    return res.status(400).json({ error: "File must be < 2MB" });
-  }
-
-  // ✅ Check type
-  if (!req.file.mimetype.startsWith("image/")) {
-    return res.status(400).json({ error: "Only images allowed" });
-  }
-
-  const params = {
-    Bucket: "mern-ecommerce",
-    Key: req.file.originalname,
-    Body: req.file.buffer,
-    ACL: "public-read",
-  };
-
-  s3.upload(params, (err, data) => {
-    if (err) {
-      console.error("Upload error:", err);
-      return res.status(500).json({ error: "Upload failed" });
-    }
-    // Ensure proper URL
-    const fileUrl = `https://${data.Location.replace(/^https?:\/\//, '')}`;
-
-    res.json({ url: fileUrl });
-  });
-});
-
 app.use(express.json());
 
 // MongoDB connection
@@ -77,10 +34,13 @@ mongoose.connect(process.env.MONGO_URI, {
 
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
+app.use('/api/upload', uploadRouter);
 
 app.listen(port, () =>
   console.log(`🚀 Server running on http://localhost:${port}`)
 );
+
+
 
 // Global error handler
 app.use((err, req, res, next) => {
