@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
 import uploadRouter from './routes/upload.routes.js';
+import listingRouter from './routes/listing.routes.js';
 
 
 dotenv.config();
@@ -35,6 +36,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/upload', uploadRouter);
+app.use('/api/listing', listingRouter);
 
 app.listen(port, () =>
   console.log(`🚀 Server running on http://localhost:${port}`)
