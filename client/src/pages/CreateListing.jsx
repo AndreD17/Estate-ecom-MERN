@@ -1,35 +1,54 @@
 import { useState } from "react";
-
+import {useSelector} from "react-redux"
+import {useNavigate} from "react-router-dom"
 export default function CreateListing() {
+  
   const [uploading, setUploading] = useState(false);
   const [loading, setLoading] = useState(false);
   const [files, setFiles] = useState([]);
+  const [error, seterror] = useState([])
   const [imageUploadError, setImageUploadError] = useState("");
+  
+  const { currentUser } = useSelector((state) => state.user);
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
+    imageUrls: [],
     name: "",
     description: "",
     address: "",
-    sale: false,
-    rent: false,
-    parking: false,
-    furnished: false,
-    offer: false,
+    type:"rent",
     bedrooms: 1,
     bathrooms: 1,
     regularPrice: 0,
-    discountedPrice: 0,
-    imageUrls: [],
+    discountedPrice: 45,
+    offer: false,
+    parking: false,
+    furnished: false,
   });
 
   
-  // ✅ Handle input changes
-  const handleChange = (e) => {
-    const { id, type, value, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [id]: type === "checkbox" ? checked : value,
-    }));
-  };
+  console.log(formData);
+  
+  const handleChange = (e) =>{
+    if(e.target.id === 'sale' || e.target.id === 'rent'){
+      setFormData({
+        ...formData,
+        type: e.target.id
+      })
+    }
+    if(e.target.id === 'parking' || e.target.id === 'furnished' || e.target.id === 'offer' ){
+      setFormData({
+        ...formData,
+        [e.target.id]:e.target.checked
+      })
+    }
+    if(e.target.type === 'number' || e.target.type === 'text' || e.target.type == 'textarea'){
+      setFormData({
+        ...formData,
+        [e.target.id]: e.target.value
+      })
+    }
+  }
 
   // ✅ Handle multiple image uploads
   const handleImageSubmit = async (e) => {
@@ -74,7 +93,6 @@ export default function CreateListing() {
 
       console.log("Uploaded URLs:", data.urls);
 
-      // ✅ Merge new images with existing ones
       const newUrls = [...formData.imageUrls, ...data.urls];
       setFormData((prev) => ({ ...prev, imageUrls: newUrls }));
 
@@ -92,46 +110,40 @@ export default function CreateListing() {
     setFormData((prev) => ({ ...prev, imageUrls: updatedUrls }));
   };
 
-  // ✅ Handle form submission
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-
-    if (formData.imageUrls.length === 0) {
-      alert("Please upload at least one image before submitting");
-      setLoading(false);
-      return;
-    }
-
-    try {
-      const payload = {
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    if(formData.imageUrls < 1) return seterror('You must upload at least one image');
+    if (+formData.discountedPrice >= +formData.regularPrice) {
+    seterror("Discounted price must be lower than regular price");
+    return;
+  }
+    setLoading(true)
+    seterror(false)
+    const res = await fetch('/api/listing/create', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body:JSON.stringify({
         ...formData,
-        coverImage: formData.imageUrls[0], // ✅ first image as cover
-      };
-
-      const res = await fetch("/api/listings", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        alert(data.error || "Failed to create listing");
-        setLoading(false);
-        return;
-      }
-
-      alert("Listing created successfully!");
-      console.log("Created Listing:", data);
-    } catch (error) {
-      console.error("Submit error:", error);
-      alert("Failed to create listing");
-    } finally {
-      setLoading(false);
+        userRef: currentUser._id ||  currentUser.user._id
+      }),
+    });
+    const data = await res.json();
+    setLoading(false)
+    if(data.success === false ){
+      seterror(data.message)
     }
-  };
-
+    navigate(`/listing/${data._id}`)
+    
+  } catch (error) {
+    seterror(error.message)
+    setLoading(false)
+    
+    
+  }
+}
   return (
     <main className="p-3 max-w-xl mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">
@@ -147,6 +159,7 @@ export default function CreateListing() {
           id="name"
           required
           onChange={handleChange}
+          value={formData.name}
         />
 
         <textarea
@@ -155,6 +168,7 @@ export default function CreateListing() {
           id="description"
           required
           onChange={handleChange}
+          value={formData.description}
         />
 
         <input
@@ -164,6 +178,7 @@ export default function CreateListing() {
           id="address"
           required
           onChange={handleChange}
+          value={formData.address}
         />
 
         {/* Checkboxes */}
@@ -179,7 +194,8 @@ export default function CreateListing() {
                 type="checkbox"
                 id={item.id}
                 className="w-5 h-5"
-                onChange={handleChange}
+                onChange={handleChange}   
+                checked={formData[item.id] || false }   
               />
               <span>{item.label}</span>
             </div>
@@ -192,32 +208,87 @@ export default function CreateListing() {
             id="offer"
             className="w-5 h-5"
             onChange={handleChange}
+            checked={formData.offer}
           />
           <span>Offer</span>
+          
         </div>
 
         {/* Numeric inputs */}
-        <div className="grid grid-cols-2 gap-4">
-          {[
-            { id: "bedrooms", label: "Beds", min: 1, max: 10 },
-            { id: "bathrooms", label: "Baths", min: 1, max: 5 },
-            { id: "regularPrice", label: "Regular Price" },
-            { id: "discountedPrice", label: "Discounted Price" },
-          ].map((item) => (
-            <div key={item.id} className="flex items-center gap-2">
-              <input
-                className="w-full p-3 border rounded-lg"
-                type="number"
-                id={item.id}
-                min={item.min}
-                max={item.max}
-                required
-                onChange={handleChange}
-              />
-              <p>{item.label}</p>
-            </div>
-          ))}
-        </div>
+<div className="grid grid-cols-2 gap-4">
+  {/* Bedrooms */}
+  <div className="flex flex-col">
+    <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
+      Beds
+    </label>
+    <input
+      className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+      type="number"
+      id="bedrooms"
+      min="1"
+      max="10"
+      required
+      onChange={handleChange}
+      value={formData.bedrooms}
+    />
+  </div>
+
+  {/* Bathrooms */}
+  <div className="flex flex-col">
+    <label htmlFor="bathrooms" className="font-medium text-gray-700 text-sm mb-1">
+      Baths
+    </label>
+    <input
+      className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+      type="number"
+      id="bathrooms"
+      min="1"
+      max="5"
+      required
+      onChange={handleChange}
+      value={formData.bathrooms}
+    />
+  </div>
+
+  {/* Regular Price */}
+  <div className="flex flex-col">
+    <label htmlFor="regularPrice" className="font-medium text-gray-700 text-sm mb-1">
+      Regular Price
+    </label>
+    <input
+      className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+      type="number"
+      id="regularPrice"
+      min="50"
+      max="10000000"
+      required
+      onChange={handleChange}
+      value={formData.regularPrice}
+    />
+    <p className="text-xs text-gray-500 mt-1">($ / month)</p>
+  </div>
+
+  {/* Discounted Price — only visible when offer is checked */}
+  {formData.offer && (
+    <div className="flex flex-col">
+      <label htmlFor="discountedPrice" className="font-medium text-gray-700 text-sm mb-1">
+        Discounted Price
+      </label>
+      <input
+        className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+        type="number"
+        id="discountedPrice"
+        min="0"
+        max="10000000"
+        required
+        onChange={handleChange}
+        value={formData.discountedPrice}
+      />
+      <p className="text-xs text-gray-500 mt-1">($ / month)</p>
+    </div>
+  )}
+</div>
+
 
         {/* Image Upload Section */}
         <div className="flex flex-col gap-4">
@@ -282,6 +353,7 @@ export default function CreateListing() {
         >
           {loading ? "Creating..." : "Create Listing"}
         </button>
+       {error && <p className="text-red-700 text-sm">{error}</p>}
       </form>
     </main>
   );
