@@ -114,10 +114,7 @@ const handleSubmit = async (e) => {
   e.preventDefault();
   try {
     if(formData.imageUrls < 1) return seterror('You must upload at least one image');
-    if (+formData.discountedPrice >= +formData.regularPrice) {
-    seterror("Discounted price must be lower than regular price");
-    return;
-  }
+    if (+formData.discountedPrice >= +formData.regularPrice) return seterror("Discounted price must be lower than regular price");
     setLoading(true)
     seterror(false)
     const res = await fetch('/api/listing/create', {
@@ -215,26 +212,26 @@ const handleSubmit = async (e) => {
         </div>
 
         {/* Numeric inputs */}
-<div className="grid grid-cols-2 gap-4">
-  {/* Bedrooms */}
-  <div className="flex flex-col">
-    <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
-      Beds
-    </label>
-    <input
-      className="w-32 p-2 text-sm border border-gray-300 rounded-md"
-      type="number"
-      id="bedrooms"
-      min="1"
-      max="10"
-      required
-      onChange={handleChange}
-      value={formData.bedrooms}
-    />
-  </div>
+    <div className="grid grid-cols-2 gap-4">
+      {/* Bedrooms */}
+      <div className="flex flex-col">
+      <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
+         Beds
+        </label>
+        <input
+        className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+        type="number"
+        id="bedrooms"
+        min="1"
+        max="10"
+        required
+        onChange={handleChange}
+        value={formData.bedrooms}
+      />
+    </div>
 
-  {/* Bathrooms */}
-  <div className="flex flex-col">
+    {/* Bathrooms */}
+    <div className="flex flex-col">
     <label htmlFor="bathrooms" className="font-medium text-gray-700 text-sm mb-1">
       Baths
     </label>
@@ -244,7 +241,7 @@ const handleSubmit = async (e) => {
       id="bathrooms"
       min="1"
       max="5"
-      required
+      required     
       onChange={handleChange}
       value={formData.bathrooms}
     />
@@ -256,7 +253,7 @@ const handleSubmit = async (e) => {
       Regular Price
     </label>
     <input
-      className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+     className="w-32 p-2 text-sm border border-gray-300 rounded-md"
       type="number"
       id="regularPrice"
       min="50"

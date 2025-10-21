@@ -65,7 +65,6 @@ export default function Profile() {
       }
       dispatch(updateUserSuccess(data));
       setUserUpdated(true);
-      alert("Profile updated successfully");
     } catch (error) {
       dispatch(updateUserFailure(error.message));
     }
@@ -87,7 +86,6 @@ export default function Profile() {
       console.log("Uploaded:", res.data.url);
     } catch (err) {
       console.error("Upload failed:", err);
-      alert("Upload failed, check console");
     } finally {
       setUploading(false);
     }
@@ -113,10 +111,9 @@ export default function Profile() {
         return;
       }
       dispatch(deleteUserSuccess(data));
-      alert("Account deleted successfully");
     } catch (error) {
       dispatch(deleteUserFailure(error.message))
-      
+      alert(data.message)
     }
   }
 

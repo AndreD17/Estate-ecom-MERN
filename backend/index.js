@@ -9,6 +9,7 @@ import uploadRouter from './routes/upload.routes.js';
 import listingRouter from './routes/listing.routes.js';
 
 
+
 dotenv.config();
 
 
@@ -17,7 +18,7 @@ const port = 4000;
 
 
 app.use(cors({
-  origin: "http://localhost:5173", // your React dev server
+  origin: "http://localhost:5173", 
   methods: ["GET", "POST"]
 }));
 
@@ -36,7 +37,7 @@ mongoose.connect(process.env.MONGO_URI, {
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/upload', uploadRouter);
-app.use('/api/listing', listingRouter);
+app.use('/api/listings', listingRouter);
 app.use("/api/upload/multiple", uploadRouter);
 
 app.listen(port, () =>
