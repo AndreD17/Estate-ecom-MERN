@@ -276,7 +276,9 @@ export default function Profile() {
             {/* Action buttons */}
             <div className="flex flex-col items-center flex-shrink-0">
               <button onClick={()=>handleDeleteListing(listing._id)} className="text-red-700 uppercase">Delete</button>
-              <button className="text-green-700 uppercase">Edit</button>
+              <Link to={`/Update-Listing/${listing._id}`}>
+                 <button  className="text-green-700 uppercase">Edit</button>
+              </Link>
             </div>
           </div>
         ))}
