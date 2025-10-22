@@ -14,6 +14,7 @@ export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
   const [showListingError, setShowListingError] = useState(false)
+  const [deleteListingError, setDeleteListingError] = useState(false)
   const [file, setFile] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [uploading, setUploading] = useState(false);
@@ -149,8 +150,27 @@ export default function Profile() {
     } catch (error) {
       setShowListingError(true)     
     }
-    
   }
+
+  const handleDeleteListing = async (listingId) => {
+      try {
+        const res = await fetch(`/api/listings/delete/${listingId}`, {
+          method: 'DELETE'
+        });
+        const data = await res.json();
+        if(data.success === false){
+          console.log(data.message);
+          return
+          
+        }
+        setUserListings((prev) => prev.filter((listing)=> listing._id != listingId));
+        
+      } catch (error) {
+        console.log(error.message);
+        setDeleteListingError(true);
+        
+      }
+    }
   return (
     <div className="p-2 max-w-lg mx-auto">
       <h1 className="text-3xl font-semibold text-center my-7">Profile</h1>
@@ -255,7 +275,7 @@ export default function Profile() {
 
             {/* Action buttons */}
             <div className="flex flex-col items-center flex-shrink-0">
-              <button className="text-red-700 uppercase">Delete</button>
+              <button onClick={()=>handleDeleteListing(listing._id)} className="text-red-700 uppercase">Delete</button>
               <button className="text-green-700 uppercase">Edit</button>
             </div>
           </div>
