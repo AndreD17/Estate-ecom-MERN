@@ -19,6 +19,7 @@ const port = 4000;
 
 app.use(cors({
   origin: "http://localhost:5173", 
+  credentials: true,   
   methods: ["GET", "POST"]
 }));
 
@@ -43,8 +44,6 @@ app.use("/api/upload/multiple", uploadRouter);
 app.listen(port, () =>
   console.log(`🚀 Server running on http://localhost:${port}`)
 );
-
-
 
 // Global error handler
 app.use((err, req, res, next) => {

@@ -19,8 +19,8 @@ export default function CreateListing() {
     type:"rent",
     bedrooms: 1,
     bathrooms: 1,
-    regularPrice: 0,
-    discountedPrice: 45,
+    regularPrice: 50,
+    discountedPrice: 0,
     offer: false,
     parking: false,
     furnished: false,
@@ -117,17 +117,19 @@ const handleSubmit = async (e) => {
     if (+formData.discountedPrice >= +formData.regularPrice) return seterror("Discounted price must be lower than regular price");
     setLoading(true)
     seterror(false)
-    const res = await fetch('/api/listing/create', {
+    const res = await fetch('/api/listings/create', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
+      credentials: 'include',
       body:JSON.stringify({
         ...formData,
         userRef: currentUser._id ||  currentUser.user._id
       }),
     });
     const data = await res.json();
+    console.log('Created listing response:', data);
     setLoading(false)
     if(data.success === false ){
       seterror(data.message)
@@ -147,144 +149,176 @@ const handleSubmit = async (e) => {
         Create a Listing
       </h1>
 
-      <form onSubmit={handleSubmit} className="flex flex-col gap-6">
-        {/* Text inputs */}
-        <input
-          type="text"
-          placeholder="Name"
-          className="border p-3 rounded-lg"
-          id="name"
-          required
-          onChange={handleChange}
-          value={formData.name}
-        />
+        <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+          {/* Text inputs */}
+          <input
+            type="text"
+            placeholder="Name"
+            className="border p-3 rounded-lg"
+            id="name"
+            required
+            onChange={handleChange}
+            value={formData.name}
+          />
 
-        <textarea
-          placeholder="Description"
-          className="border p-3 rounded-lg"
-          id="description"
-          required
-          onChange={handleChange}
-          value={formData.description}
-        />
+          <textarea
+            placeholder="Description"
+            className="border p-3 rounded-lg"
+            id="description"
+            required
+            onChange={handleChange}
+            value={formData.description}
+          />
 
-        <input
-          type="text"
-          placeholder="Address"
-          className="border p-3 rounded-lg"
-          id="address"
-          required
-          onChange={handleChange}
-          value={formData.address}
-        />
-
-        {/* Checkboxes */}
+          <input
+            type="text"
+            placeholder="Address"
+            className="border p-3 rounded-lg"
+            id="address"
+            required
+            onChange={handleChange}
+            value={formData.address}
+          />
+          {/* Property Type (Sale / Rent) */}
         <div className="flex flex-wrap gap-4">
-          {[
-            { id: "sale", label: "Sell" },
-            { id: "rent", label: "Rent" },
-            { id: "parking", label: "Parking spot" },
-            { id: "furnished", label: "Furnished" },
-          ].map((item) => (
-            <div key={item.id} className="flex items-center gap-2">
+          {/* Sale */}
+          <div className="flex items-center gap-2">
+          <input
+            type="radio"
+            id="sale"
+            name="type"
+            value="sale"
+            className="w-5 h-5 accent-blue-600" // makes blue dot visible
+            onChange={handleChange}
+            checked={formData.type === "sale"}
+            required
+          />
+          <span>Sell</span>
+        </div>
+
+          {/* Rent */}
+          <div className="flex p-3 items-center gap-3">
+            <input
+            type="radio"
+            id="rent"
+            name="type"
+            value="rent"
+            className="w-5 h-5 accent-blue-600"
+            onChange={handleChange}
+            checked={formData.type === "rent"}
+            />
+          <span>Rent</span>
+          </div>
+        </div>
+            {/* Checkboxes */}
+            <div className="flex flex-wrap gap-4">
+              {[
+                { id: "parking", label: "Parking spot" },
+                { id: "furnished", label: "Furnished" },
+              ].map((item) => (
+                <div key={item.id} className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    id={item.id}
+                    className="w-5 h-5"
+                    onChange={handleChange}   
+                    checked={formData[item.id] || false }   
+                  />
+                  <span>{item.label}</span>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex gap-2 items-center mt-3">
               <input
                 type="checkbox"
-                id={item.id}
+                id="offer"
                 className="w-5 h-5"
-                onChange={handleChange}   
-                checked={formData[item.id] || false }   
+                onChange={handleChange}
+                checked={formData.offer}
               />
-              <span>{item.label}</span>
+              <span>Offer</span>
+              
             </div>
-          ))}
-        </div>
 
-        <div className="flex gap-2 items-center mt-3">
-          <input
-            type="checkbox"
-            id="offer"
-            className="w-5 h-5"
+            {/* Numeric inputs */}
+        <div className="grid grid-cols-2 gap-4">
+          {/* Bedrooms */}
+          <div className="flex flex-col">
+          <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
+            Beds
+            </label>
+            <input
+            className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+            type="number"
+            id="bedrooms"
+            min="1"
+            max="10"
+            required
             onChange={handleChange}
-            checked={formData.offer}
+            value={formData.bedrooms}
           />
-          <span>Offer</span>
-          
         </div>
 
-        {/* Numeric inputs */}
-    <div className="grid grid-cols-2 gap-4">
-      {/* Bedrooms */}
+        {/* Bathrooms */}
+        <div className="flex flex-col">
+        <label htmlFor="bathrooms" className="font-medium text-gray-700 text-sm mb-1">
+          Baths
+        </label>
+        <input
+          className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+          type="number"
+          id="bathrooms"
+          min="1"
+          max="5"
+          required     
+          onChange={handleChange}
+          value={formData.bathrooms}
+        />
+      </div>
+
+      {/* Regular Price */}
       <div className="flex flex-col">
-      <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
-         Beds
+        <label htmlFor="regularPrice" className="font-medium text-gray-700 text-sm mb-1">
+          Regular Price
         </label>
         <input
         className="w-32 p-2 text-sm border border-gray-300 rounded-md"
-        type="number"
-        id="bedrooms"
-        min="1"
-        max="10"
-        required
-        onChange={handleChange}
-        value={formData.bedrooms}
-      />
-    </div>
+          type="number"
+          id="regularPrice"
+          min="50"
+          max="10000000"
+          required
+          onChange={handleChange}
+          value={formData.regularPrice}
+        />
+        {formData.type === "rent" && (
+          <p className="text-xs text-gray-500 mt-1">($ / month)</p>
+        )}
+      </div>
 
-    {/* Bathrooms */}
-    <div className="flex flex-col">
-    <label htmlFor="bathrooms" className="font-medium text-gray-700 text-sm mb-1">
-      Baths
-    </label>
-    <input
-      className="w-32 p-2 text-sm border border-gray-300 rounded-md"
-      type="number"
-      id="bathrooms"
-      min="1"
-      max="5"
-      required     
-      onChange={handleChange}
-      value={formData.bathrooms}
-    />
-  </div>
-
-  {/* Regular Price */}
-  <div className="flex flex-col">
-    <label htmlFor="regularPrice" className="font-medium text-gray-700 text-sm mb-1">
-      Regular Price
-    </label>
-    <input
-     className="w-32 p-2 text-sm border border-gray-300 rounded-md"
-      type="number"
-      id="regularPrice"
-      min="50"
-      max="10000000"
-      required
-      onChange={handleChange}
-      value={formData.regularPrice}
-    />
-    <p className="text-xs text-gray-500 mt-1">($ / month)</p>
-  </div>
-
-  {/* Discounted Price — only visible when offer is checked */}
-  {formData.offer && (
-    <div className="flex flex-col">
-      <label htmlFor="discountedPrice" className="font-medium text-gray-700 text-sm mb-1">
-        Discounted Price
-      </label>
-      <input
-        className="w-32 p-2 text-sm border border-gray-300 rounded-md"
-        type="number"
-        id="discountedPrice"
-        min="0"
-        max="10000000"
-        required
-        onChange={handleChange}
-        value={formData.discountedPrice}
-      />
-      <p className="text-xs text-gray-500 mt-1">($ / month)</p>
-    </div>
-  )}
-</div>
+        {/* Discounted Price — only visible when offer is checked */}
+        {formData.offer && (
+          <div className="flex flex-col">
+            <label htmlFor="discountedPrice" className="font-medium text-gray-700 text-sm mb-1">
+              Discounted Price
+            </label>
+            <input
+              className="w-32 p-2 text-sm border border-gray-300 rounded-md"
+              type="number"
+              id="discountedPrice"
+              min="50"
+              max="10000000"
+              required
+              onChange={handleChange}
+              value={formData.discountedPrice}
+            />
+            {formData.type === "rent" && (
+              <p className="text-xs text-gray-500 mt-1">($ / month)</p>
+            )}
+              </div>
+          )}
+        </div>
 
 
         {/* Image Upload Section */}
