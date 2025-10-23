@@ -3,6 +3,8 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import Home from './pages/Home'
 import About from './pages/About'
 import SignIn from './pages/signIn'
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import SignUp from './pages/SignUp'
 import Profile from './pages/Profile'
 import Header from './components/Header'
@@ -10,6 +12,7 @@ import PrivateRoute from './components/privateRoute'
 import CreateListing from './pages/createListing'
 import Listing from './pages/Listing'
 import UpdateListing from './pages/UpdateListing'
+
 
 export default function App() {
   return (
@@ -23,6 +26,9 @@ export default function App() {
         
         {/* ✅ Make listing public */}
         <Route path="/listing/:listingId" element={<Listing />} />
+
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password/:token" element={<ResetPassword />} />
 
         <Route element={<PrivateRoute />}>
           <Route path='/profile' element={<Profile />} />

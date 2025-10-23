@@ -135,44 +135,42 @@ useEffect(() => {
     setFormData((prev) => ({ ...prev, imageUrls: updatedUrls }));
   };
 
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    if(formData.imageUrls < 1) return seterror('You must upload at least one image');
-    if (+formData.discountedPrice >= +formData.regularPrice) return seterror("Discounted price must be lower than regular price");
-    setLoading(true)
-    seterror(false)
-    const res = await fetch(`/api/listings/update/${params.listingId}`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      credentials: 'include',
-      body:JSON.stringify({
-        ...formData,
-        userRef: currentUser._id ||  currentUser.user._id
-      }),
-    });
-    const data = await res.json();
-    console.log('Created listing response:', data);
-    setLoading(false)
-    if(data.success === false ){
-      seterror(data.message)
+    const handleSubmit = async (e) => {
+      e.preventDefault();
+      try {
+        if(formData.imageUrls < 1) return seterror('You must upload at least one image');
+        if (+formData.discountedPrice >= +formData.regularPrice) return seterror("Discounted price must be lower than regular price");
+        setLoading(true)
+        seterror(false)
+        const res = await fetch(`/api/listings/update/${params.listingId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          credentials: 'include',
+          body:JSON.stringify({
+            ...formData,
+            userRef: currentUser._id ||  currentUser.user._id
+          }),
+        });
+        const data = await res.json();
+        console.log('Created listing response:', data);
+        setLoading(false)
+        if(data.success === false ){
+          seterror(data.message)
+        }
+        navigate(`/listing/${data._id}`)
+        
+      } catch (error) {
+        seterror(error.message)
+        setLoading(false)
+      }
     }
-    navigate(`/listing/${data._id}`)
-    
-  } catch (error) {
-    seterror(error.message)
-    setLoading(false)
-    
-    
-  }
-}
-  return (
-    <main className="p-3 max-w-xl mx-auto">
-      <h1 className="text-3xl font-semibold text-center my-7">
-        Update Listing
-      </h1>
+    return (
+      <main className="p-3 max-w-xl mx-auto">
+        <h1 className="text-3xl font-semibold text-center my-7">
+          Update Listing
+        </h1>
 
         <form onSubmit={handleSubmit} className="flex flex-col gap-6">
           {/* Text inputs */}
@@ -204,7 +202,7 @@ const handleSubmit = async (e) => {
             onChange={handleChange}
             value={formData.address}
           />
-          {/* Property Type (Sale / Rent) */}
+          
         <div className="flex flex-wrap gap-4">
           {/* Sale */}
           <div className="flex items-center gap-2">
@@ -213,7 +211,7 @@ const handleSubmit = async (e) => {
             id="sale"
             name="type"
             value="sale"
-            className="w-5 h-5 accent-blue-600" // makes blue dot visible
+            className="w-5 h-5 accent-blue-600" 
             onChange={handleChange}
             checked={formData.type === "sale"}
             required
@@ -221,7 +219,6 @@ const handleSubmit = async (e) => {
           <span>Sell</span>
         </div>
 
-          {/* Rent */}
           <div className="flex p-3 items-center gap-3">
             <input
             type="radio"

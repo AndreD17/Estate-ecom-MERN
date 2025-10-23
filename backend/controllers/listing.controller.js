@@ -43,8 +43,6 @@ export const updateListing = async (req, res, next) => {
   } catch (error) {
   next(error)    
   }
-
-  
 };
 
 export const getListing = async (req, res, next) => {
