@@ -41,7 +41,7 @@ export default function ResetPassword() {
           onChange={(e) => setPassword(e.target.value)}
         />
         <button className="bg-green-700 text-white p-3 rounded-lg hover:opacity-90">
-          {loading ? 'Sending Password Reset Link...' : 'Send Reset Link'}
+          {loading ? 'Updating Password...' : 'Enter Your New Password Here'}
         </button>
       </form>
       {message && <p className="mt-4 text-center text-sm text-gray-700">{message}</p>}

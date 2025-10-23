@@ -241,11 +241,11 @@ const handleSubmit = async (e) => {
               
             </div>
 
-            {/* Numeric inputs */}
-        <div className="grid grid-cols-2 gap-4">
+          {/* Numeric inputs */}
+            <div className="grid grid-cols-2 gap-4">
           {/* Bedrooms */}
-          <div className="flex flex-col">
-          <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
+            <div className="flex flex-col">
+            <label htmlFor="bedrooms" className="font-medium text-gray-700 text-sm mb-1">
             Beds
             </label>
             <input
@@ -319,7 +319,6 @@ const handleSubmit = async (e) => {
               </div>
           )}
         </div>
-
 
         {/* Image Upload Section */}
         <div className="flex flex-col gap-4">
