@@ -1,6 +1,6 @@
-import React from 'react' 
+import React, { useEffect, useState } from 'react' 
 import { FaSearch } from 'react-icons/fa'
-import {Link} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {useSelector } from 'react-redux';
 import { getGravatar } from '../utils/gravator';
 
@@ -8,6 +8,8 @@ import { getGravatar } from '../utils/gravator';
 
 export default function Header() {
  const { currentUser } = useSelector(state => state.user);
+ const [SearchTerm, setSearchTerm] = useState('');
+ const navigate = useNavigate();
 
 
  
@@ -16,6 +18,22 @@ export default function Header() {
 
   // Choose avatar: user.avatar -> gravatar from email -> default
   const avatarSrc = currentUser?.avatar || getGravatar(currentUser?.email) || defaultAvatar;
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    const urlParams = new URLSearchParams(window.location.search);
+    urlParams.set('searchTerm', SearchTerm);
+    const searchQuery = urlParams.toString();
+    navigate(`/search?${searchQuery}`);
+  }
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchTermFromUrl = urlParams.get('searchTerm');
+    if (searchTermFromUrl) {
+      setSearchTerm(searchTermFromUrl);
+    }
+  }, [location.search]);
 
   return (
     <header className='bg-slate-200 shadow-md'>
@@ -26,11 +44,14 @@ export default function Header() {
             <span className="text-slate-700">Real-Estate </span>
         </h1>
         </Link>
-        <form className='bg-slate-100 p-3 rounded-lg flex item-center'>
+        <form onSubmit={handleSubmit} className='bg-slate-100 p-3 rounded-lg flex item-center'>
             <input type='text' placeholder= "Search..." 
             className='bg-transparent focus:outline-none w-24 sm:w-64' 
-             />
-            <FaSearch className="text-slate-600" />
+            value={SearchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+             /> <button>
+              <FaSearch className="text-slate-600" />
+             </button>
         </form>
          <ul className='flex gap-4 items-center'>
           <li className='hidden sm:inline text-slate-700 hover:underline'>
