@@ -60,3 +60,19 @@ export const getUserListings = async (req, res, next) => {
 };
 
 
+export const getUser = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.params.id);
+    if (!user) return next(errorHandler(404, 'User not found'));
+
+    // Destructure to remove password
+    const { password: pass, ...rest } = user._doc;
+
+    // Send only the safe user data
+    return res.status(200).json(rest);
+  } catch (error) {
+    next(error);
+  }
+};
+
+
