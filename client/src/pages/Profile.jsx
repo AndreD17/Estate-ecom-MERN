@@ -6,20 +6,23 @@ import { app } from "../firebase";
 import {updateUserStart, updateUserSuccess, updateUserFailure, deleteUserFailure, deleteUserSuccess, deleteUserStart,
   signOutUserStart, signOutUserSuccess, signOutUserFailure
 } from "../redux/user/userSlice";
-import { Link} from "react-router-dom"
+import { Link} from "react-router-dom";
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Listing from "../../../backend/models/listing.model";
+
 
 
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
-  const [showListingError, setShowListingError] = useState(false)
-  const [deleteListingError, setDeleteListingError] = useState(false)
+  const [showPassword, setShowPassword] = useState(false); 
+  const [showListingError, setShowListingError] = useState(false);
+  const [deleteListingError, setDeleteListingError] = useState(false);
   const [file, setFile] = useState(null);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [uploading, setUploading] = useState(false);
   const dispatch = useDispatch();
-  const [userListings, setUserListings] = useState([])
+  const [userListings, setUserListings] = useState([]);
 
 
   const [formData, setFormData] = useState({
@@ -154,7 +157,7 @@ export default function Profile() {
 
   const handleDeleteListing = async (listingId) => {
       try {
-        const res = await fetch(`/api/listings/delete/${listingId}`, {
+          const res = await fetch(`/api/listings/delete/${listingId}`, {
           method: 'DELETE'
         });
         const data = await res.json();
@@ -218,13 +221,23 @@ export default function Profile() {
           className="border p-3 rounded-lg"
           onChange={handleChange}
         />
-        <input
-          type="password"
-          placeholder="password"
-          onChange={handleChange}
-          id="password"
-          className="border p-3 rounded-lg"
-        />
+        
+         {/* 🔹 Password field with show/hide toggle */}
+             <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  placeholder="Password"
+                  className="border p-3 rounded-lg w-full"
+                  id="password"
+                  onChange={handleChange}
+                  />
+                  <span
+                      onClick={() => setShowPassword(!showPassword)}
+                      className="absolute right-3 top-3 cursor-pointer text-sm text-grey-600 hover:text-gray-800"
+                    >
+                      {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                    </span>
+                  </div>
         <button className="bg-slate-700 text-white rounded-lg p-3 uppercase hover:opacity-95 disabled:opacity-80">
           {loading ? "Loading..." : "Update"}
         </button>
@@ -242,10 +255,6 @@ export default function Profile() {
       <button onClick={handleShowListing} className="text-green-700 w-full ">Show Listings</button>
       <p className="text-red-700">{showListingError ? 'Error showing listing' : ''}</p>
       
-
-    
-
-    
         {userListings &&
          userListings.length > 0 &&
          <div className="flex flex-col gap-4">

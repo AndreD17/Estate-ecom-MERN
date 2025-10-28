@@ -342,7 +342,6 @@ useEffect(() => {
           )}
         </div>
 
-
         {/* Image Upload Section */}
         <div className="flex flex-col gap-4">
           <p className="font-semibold">

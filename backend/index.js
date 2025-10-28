@@ -10,6 +10,7 @@ import listingRouter from './routes/listing.routes.js';
 
 
 
+
 dotenv.config();
 
 
@@ -40,6 +41,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/listings', listingRouter);
 app.use("/api/upload/multiple", uploadRouter);
+
 
 app.listen(port, () =>
   console.log(`🚀 Server running on http://localhost:${port}`)

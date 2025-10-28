@@ -1,13 +1,13 @@
 import { Link, useNavigate } from 'react-router-dom'
 import OAuth from '../components/OAuth';
 import { useState } from 'react';
-import React from 'react';
-
+import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 
 export default function SignUp() {
   const [formData, setFormData] = useState({})
   const [error, setError] = useState(null);
+  const [showPassword, setShowPassword] = useState(false); // 👈 toggle state
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const handleChange =(e) =>{
@@ -43,26 +43,40 @@ export default function SignUp() {
       setError(error.message); 
     }
   };
- 
 
   return (<div className='= p-3 max-w-lg mx-auto'>
     <h1 className='text-3xl text-center font-semibold my-7'>Sign Up</h1>
     <form onSubmit={handleSubmit} className='flex flex-col gap-4'>
-      <input type="text" placeholder='Username' className='border p-3 rounded-lg' id='username' onChange={handleChange} />
-      <input type="email" placeholder='Email' className='border p-3 rounded-lg' id='email' onChange={handleChange} />
-      <input type="password" placeholder='Password' className='border p-3 rounded-lg' id='password'  onChange={handleChange}/>
-      <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-05 
-      disabled:opacity-80'>
-        {loading ? 'Loading' : 'Sign Up'}
-        </button>
-        <OAuth />
-    </form>
-    <div className='flex gap-2 mt-5'>
-      <p>Have an account?</p>
-      <Link to='/sign-in'>
-      <span className='text-blue-700'>Sign in</span>
-      </Link>
-    </div>
-    {error && <p className='text-red-500 mt-5'>{error}</p>}
-  </div>)  
-}
+            <input type="text" placeholder='Username' className='border p-3 rounded-lg' id='username' onChange={handleChange} />
+            <input type="email" placeholder='Email' className='border p-3 rounded-lg' id='email' onChange={handleChange} />
+                    {/* 🔹 Password field with show/hide toggle */}
+                   <div className="relative">
+                      <input
+                        type={showPassword ? 'text' : 'password'}
+                        placeholder="Password"
+                        className="border p-3 rounded-lg w-full"
+                        id="password"
+                        onChange={handleChange}
+                        />
+                        <span
+                            onClick={() => setShowPassword(!showPassword)}
+                            className="absolute right-3 top-3 cursor-pointer text-sm text-grey-600 hover:text-gray-800"
+                          >
+                            {showPassword ? <FaEyeSlash size={20} /> : <FaEye size={20} />}
+                          </span>
+                        </div>
+              <button disabled={loading} className='bg-slate-700 text-white p-3 rounded-lg uppercase hover:opacity-05 
+              disabled:opacity-80'>
+                {loading ? 'Loading' : 'Sign Up'}
+                </button>
+                <OAuth />
+            </form>
+            <div className='flex gap-2 mt-5'>
+              <p>Have an account?</p>
+              <Link to='/sign-in'>
+              <span className='text-blue-700'>Sign in</span>
+              </Link>
+            </div>
+            {error && <p className='text-red-500 mt-5'>{error}</p>}
+          </div>)  
+        }

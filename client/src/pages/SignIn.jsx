@@ -36,7 +36,7 @@ export default function SignIn() {
         dispatch(signinFailure(data.message));
         return;
       }
-      dispatch(signinSuccess(data));
+      dispatch(signinSuccess(data.user));
       navigate('/');
     } catch (error) {
       dispatch(signinFailure(error.message));
@@ -93,7 +93,7 @@ export default function SignIn() {
           </Link>
           </div>
 
-      {error && <p className="text-red-500 mt-5">{error}</p>}
-    </div>
+        {error && <p className="text-red-500 mt-5">{error}</p>}
+      </div>
   );
 }
