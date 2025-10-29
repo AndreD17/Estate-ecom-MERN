@@ -8,7 +8,14 @@
     "build": "vite build",
     "lint": "eslint .",
     "build:css": "tailwindcss -i ./src/index.css -o ./src/output.css --watch",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "jest --runInBand"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "transform": {
+      "^.+\\.js$": "babel-jest"
+    }
   },
   "dependencies": {
     "@redux-devtools/extension": "^3.3.0",

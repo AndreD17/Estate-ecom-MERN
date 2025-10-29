@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react' 
 import { FaSearch } from 'react-icons/fa'
-import {Link, useNavigate} from 'react-router-dom';
+import {Link, useNavigate, useLocation} from 'react-router-dom';
 import {useSelector } from 'react-redux';
 import { getGravatar } from '../utils/gravator';
 
@@ -10,6 +10,7 @@ export default function Header() {
  const { currentUser } = useSelector(state => state.user);
  const [SearchTerm, setSearchTerm] = useState('');
  const navigate = useNavigate();
+ const location = useLocation();
 
 
  
