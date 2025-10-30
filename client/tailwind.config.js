@@ -8,5 +8,8 @@ export default {
   theme: {
     extend: {},
   },
-  plugins: [],
+ plugins: [
+    // ...
+    import("@tailwindcss/line-clamp"),
+  ],
 }
