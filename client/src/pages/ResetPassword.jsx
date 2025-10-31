@@ -27,7 +27,8 @@ export default function ResetPassword() {
       if (res.ok) {
         setTimeout(() => navigate('/sign-in'), 2000);
       }
-    } catch (err) {
+    } catch (error) {
+      console.log(error);
       setMessage('Something went wrong. Please try again.');
     } finally {
       setLoading(false);

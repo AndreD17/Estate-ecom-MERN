@@ -11,7 +11,6 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import Listing from "../../../backend/models/listing.model";
 
 
-
 export default function Profile() {
   const fileRef = useRef(null);
   const { currentUser, loading, error } = useSelector((state) => state.user);
@@ -84,7 +83,7 @@ export default function Profile() {
     formData.append("file", file); 
 
     try {
-      const res = await axios.post("http://localhost:4000/api/upload", formData, {
+      const res = await axios.post("/api/upload", formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
 
@@ -119,7 +118,6 @@ export default function Profile() {
       dispatch(deleteUserSuccess(data));
     } catch (error) {
       dispatch(deleteUserFailure(error.message))
-      alert(data.message)
     }
   }
 
@@ -151,6 +149,8 @@ export default function Profile() {
       }
       setUserListings(data);
     } catch (error) {
+      console.log('error:', error);
+      
       setShowListingError(true)     
     }
   }
@@ -289,6 +289,9 @@ export default function Profile() {
                  <button  className="text-green-700 uppercase">Edit</button>
               </Link>
             </div>
+          <p className="text-red-700 mt-2">
+          {deleteListingError ? "Error deleting listing" : ""}
+        </p>
           </div>
         ))}
        </div>}   
