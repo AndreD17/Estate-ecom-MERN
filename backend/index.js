@@ -7,6 +7,7 @@ import userRouter from './routes/user.routes.js';
 import authRouter from './routes/auth.routes.js';
 import uploadRouter from './routes/upload.routes.js';
 import listingRouter from './routes/listing.routes.js';
+import path from 'path'
 
 
 
@@ -36,12 +37,19 @@ mongoose.connect(process.env.MONGO_URI, {
 .then(() => console.log("✅ MongoDB connected"))
 .catch(err => console.error("❌ MongoDB connection error:", err));
 
+const __dirname = path.resolve();
+
 app.use('/api/user', userRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/listings', listingRouter);
 app.use("/api/upload/multiple", uploadRouter);
 
+app.use(express.static(path.join(__dirname, '/client/dist')));
+
+app.get('-', (req, res) => {
+  res.sendFile(path.join(__dirname, 'client', 'dist', 'index.html'))
+})
 
 app.listen(port, () =>
   console.log(`🚀 Server running on http://localhost:${port}`)
