@@ -9,7 +9,7 @@ import SignUp from './pages/SignUp'
 import Profile from './pages/Profile'
 import Header from './components/Header'
 import PrivateRoute from './components/privateRoute'
-import CreateListing from './pages/createListing';
+import CreateListing from './pages/CreateListing';
 import Listing from './pages/Listing'
 import UpdateListing from './pages/UpdateListing'
 import Search from './pages/Search'
